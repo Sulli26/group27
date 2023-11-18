@@ -1,0 +1,26 @@
+class ShoppingCart:
+ def init(self, database_name="", table_name=""):
+        self.database_name = database_name
+        self.table_name = table_name
+
+    def view_cart(self, user_id, inventory_database):
+      
+        print(f"Viewing cart for user {user_id} from the {self.table_name} table in {self.database_name} database.")
+        self._retrieve_inventory_information(inventory_database)
+
+    def add_to_cart(self, user_id, isbn):
+        print(f"Adding ISBN {isbn} to the cart for user {user_id} in the {self.table_name} table in {self.database_name} database.")
+
+    def remove_from_cart(self, user_id, isbn):
+        print(f"Removing ISBN {isbn} from the cart for user {user_id} in the {self.table_name} table in {self.database_name} database.")
+
+    def check_out(self, user_id):
+        print(f"Checking out for user {user_id} in the {self.table_name} table in {self.database_name} database.")
+
+        self._update_inventory_information()
+
+    def _retrieve_inventory_information(self, inventory_database):
+        print(f"Retrieving inventory information from {inventory_database}.")
+
+    def _update_inventory_information(self):
+        print("Updating inventory information after checkout.")
