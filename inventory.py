@@ -5,50 +5,27 @@ class Inventory:
         self.database_name = database_name
         self.table_name = table_name
 
-    def Inventory(self):
-
+    def viewInventory(self):
         conn = sqlite3.connect(self.database_name)
-        cursor = conn.cursor()
-
-        cursor.execute(f"""CREATE TABLE IF NOT EXISTS{self.table_name}(
-                       "Title" TEXT NOT NULL,
-                       "ISBN" INTEGER NOT NULL UNIQUE,
-                       "Stock" INTEGER NOT NULL,
-                       "Pages" INTEGER NOT NULL,
-                       "Genre" TEXT NOT NULL,
-                       "ReleaseDate" TEXT NOT NULL,
-                       PRIMARY KEY("ISBN")
-        )""")
-        conn.commit()
+        c = conn.cursor()
+        c.execute(f"SELECT * FROM {self.table_name}")
+        inventory_data = c.fetchall()
         conn.close()
 
-    def view_Inventory(self):
-        
+        return inventory_data
+
+    def searchInventory(self, title):
         conn = sqlite3.connect(self.database_name)
-        cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM {self.table_name}")
-        rows = cursor.fetchall()
+        c = conn.cursor()
+        c.execute(f"SELECT * FROM {self.table_name} WHERE Title=?", (title,))
+        search_result = c.fetchall()
         conn.close()
 
-        for row in rows:
-            print(row)
+        return search_result
 
-    def search_inventory(self, title):
+    def decreaseStock(self, ISBN):
         conn = sqlite3.connect(self.database_name)
-        cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM {self.table_name} WHERE Title LIKE ?", ('%' + title + '%',))
-        rows = cursor.fetchall()
-        conn.close()
-
-        if rows:
-            for row in rows:
-                print(row)
-        else:
-            print(f"No results found for title: {title}")
-
-    def decrease_stock(self, ISBN):
-        conn = sqlite3.connect(self.database_name)
-        cursor = conn.cursor()
-        cursor.execute(f"UPDATE {self.table_name} SET Stock = Stock - 1 WHERE ISBN = ?", (ISBN,))
+        c = conn.cursor()
+        c.execute(f"UPDATE {self.table_name} SET Stock = Stock - 1 WHERE ISBN=?", (ISBN,))
         conn.commit()
         conn.close()
