@@ -1,16 +1,16 @@
 import sqlite3
 
 class Inventory:
-    def __init__(self, databaseName, tableName):
-        self.databaseName = databaseName
-        self.tableName = tableName
+    def __init__(self, database_name, table_name):
+        self.database_name = database_name
+        self.table_name = table_name
 
     def Inventory(self):
 
-        conn = sqlite3.connect(self.databaseName)
+        conn = sqlite3.connect(self.database_name)
         cursor = conn.cursor()
 
-        cursor.execute(f"""CREATE TABLE IF NOT EXISTS{self.tableName}(
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS{self.table_name}(
                        "Title" TEXT NOT NULL,
                        "ISBN" INTEGER NOT NULL UNIQUE,
                        "Stock" INTEGER NOT NULL,
@@ -24,7 +24,7 @@ class Inventory:
 
     def view_Inventory(self):
         
-        conn = sqlite3.connect(self.databaseName)
+        conn = sqlite3.connect(self.database_name)
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM {self.table_name}")
         rows = cursor.fetchall()
