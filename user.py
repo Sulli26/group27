@@ -1,54 +1,89 @@
+import sqlite3
+
 class User:
-    def __init__(self, database_name="", table_name=""):
+    def __init__(self, database_name, table_name):
         self.database_name = database_name
         self.table_name = table_name
-        self.logged_in = False
-        self.user_id = ""
+        self.loggedIn = False
+        self.userID = ""
 
     def login(self):
-        username = input("Enter username: ")
-        password = input("Enter password: ")
+        conn = sqlite3.connect(self.database_name)
+        c = conn.cursor()
 
-        if username == "user123" and password == "password123":
-            self.logged_in = True
-            self.user_id = username
+        # Gather user input
+        userID = input("Enter your username: ")
+        password = input("Enter your password: ")
+
+        # Validate login
+        c.execute(f"SELECT Password, UserID FROM {self.table_name} WHERE UserID=?", (userID,))
+        user_data = c.fetchone()
+
+        if user_data and password == user_data[0]:
+            self.loggedIn = True
+            self.userID = user_data[1]
             print("Login successful!")
             return True
         else:
-            print("Login failed. Invalid username or password.")
+            print("Wrong username or password. Login failed.")
             return False
 
     def logout(self):
-        if self.logged_in:
-            print("Logging out user:", self.user_id)
-            self.user_id = ""
-            self.logged_in = False
-            return True
-        else:
-            print("No user is currently logged in.")
-            return False
+        self.userID = ""
+        self.loggedIn = False
+        print("Logout successful.")
+        return False
 
-    def view_account_information(self):
-        if self.logged_in:
-            print("User ID:", self.user_id)
+    def viewAccountInformation(self):
+        if not self.loggedIn:
+            print("You must be logged in to view account information.")
+            return
 
-            print("User's additional information from the database.")
-        else:
-            print("No user is currently logged in.")
+        conn = sqlite3.connect(self.database_name)
+        c = conn.cursor()
+        c.execute(f"SELECT * FROM {self.table_name} WHERE UserID = ?", (self.userID,))
+        account_data = c.fetchone()
+        conn.close()
 
-    def create_account(self):
-        if not self.logged_in:
-            new_username = input("Enter new username: ")
-            new_password = input("Enter new password: ")
+        print("\nAccount Information:")
+        print(f"UserID: {account_data[0]}")
+        print(f"Email: {account_data[1]}")
+        print(f"FirstName: {account_data[3]}")
+        print(f"LastName: {account_data[4]}")
+        print(f"Address: {account_data[5]}")
+        print(f"City: {account_data[6]}")
+        print(f"State: {account_data[7]}")
+        print(f"Zip: {account_data[8]}")
+        print(f"Payment: {account_data[9]}")
 
-            print(f"Account created successfully for {new_username}!")
-        else:
-            print("A user is already logged in. Please logout before creating a new account.")
+    def createAccount(self):
+        conn = sqlite3.connect(self.database_name)
+        try:
+            with conn:
+                c = conn.cursor()
 
+                userID = input("Enter your username: ")
+                email = input("Enter your email: ")
+                password = input("Enter your password: ")
 
-    def get_logged_in(self):
-        return self.logged_in
+                firstName = input("Enter your first name: ")
+                lastName = input("Enter your last name: ")
+                address = input("Enter your address: ")
+                city = input("Enter your city: ")
+                state = input("Enter your state: ")
+                zipCode = input("Enter your ZIP code: ")
+                payment = input("Enter your payment information: ")
 
-    def get_user_id(self):
-        return self.user_id
+                c.execute(f"INSERT INTO {self.table_name} (UserID, Email, Password, FirstName, LastName, Address, City, State, Zip, Payment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                      (userID, email, password, firstName, lastName, address, city, state, zipCode, payment))
+                print("Account created successfully.")
+        except Exception as e:
+            print(f"Error creating account: {e}")
+        finally:
+            conn.close()
 
+    def getLoggedIn(self):
+        return self.loggedIn
+
+    def getUserID(self):
+        return self.userID
