@@ -1,7 +1,10 @@
+# main.py
+
 import sqlite3
+import os
 from user import User
 from cart import Cart
-import os
+from inventory import Inventory
 
 class Menu:
     def __init__(self):
@@ -9,6 +12,7 @@ class Menu:
         self.c = self.conn.cursor()
         self.user_instance = User('group27_Database.db', 'Users')
         self.cart_instance = Cart('group27_Database.db', 'Cart')
+        self.inventory_instance = Inventory('group27_Database.db', 'Inventory')
 
     def run(self):
         while True:
@@ -87,7 +91,7 @@ class Menu:
                                     self.conn.commit()
                                     print("Last name has been updated.")
                                     break
-
+                                    
                                 # Add similar logic for other edit options
 
                         elif logInChoice == 2:

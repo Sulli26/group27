@@ -30,7 +30,7 @@ class User:
         self.loggedIn = False
         return False
 
-    def viewProfile(self):
+    def viewAccountInformation(self):
         conn = sqlite3.connect(self.database_name)
         c = conn.cursor()
         c.execute(f"SELECT * FROM {self.table_name} WHERE UserID = ?", (self.userID,))
@@ -43,25 +43,22 @@ class User:
 
     def createAccount(self):
         conn = sqlite3.connect(self.database_name)
-        with conn:
-            c = conn.cursor()
+        c = conn.cursor()
 
-            userID = input("Enter your username: ")
-            email = input("Enter your email: ")
-            password = input("Enter your password: ")
+        userID = input("Enter your username: ")
+        email = input("Enter your email: ")
+        password = input("Enter your password: ")
+        firstName = input("Enter your first name: ")
+        lastName = input("Enter your last name: ")
+        address = input("Enter your address: ")
+        city = input("Enter your city: ")
+        state = input("Enter your state: ")
+        zipCode = input("Enter your ZIP code: ")
+        payment = input("Enter your payment information: ")
 
-            firstName = input("Enter your first name: ")
-            lastName = input("Enter your last name: ")
-            address = input("Enter your address: ")
-            city = input("Enter your city: ")
-            state = input("Enter your state: ")
-            zipCode = input("Enter your ZIP code: ")
-            payment = input("Enter your payment information: ")
-
-            c.execute(
-                f"INSERT INTO {self.table_name} (UserID, Email, Password, FirstName, LastName, Address, City, State, Zip, Payment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (userID, email, password, firstName, lastName, address, city, state, zipCode, payment))
-            conn.commit()
+        c.execute(f"INSERT INTO {self.table_name} (UserID, Email, Password, FirstName, LastName, Address, City, State, Zip, Payment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",(userID, email, password, firstName, lastName, address, city, state, zipCode, payment))
+        conn.commit()
+        print ("Created successfully!")
 
     def deleteProfile(self):
         conn = sqlite3.connect(self.database_name)
@@ -86,7 +83,3 @@ class User:
         print("\nOrder History:")
         for order in order_data:
             print(order)
-
-if __name__ == "__main__":
-    # You can add test cases for the User class here
-    pass
